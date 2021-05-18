@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "asgNames": {
+            "type": "array"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('asgNames')[copyIndex('asgName')]]",
+            "type": "Microsoft.Network/applicationSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+            },
+            "properties": {
+            },
+            "copy": {
+                "name": "asgName",
+                "count": "[length(parameters('asgNames'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}

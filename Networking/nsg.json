@@ -1,19 +1,23 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "nsgName": {
+            "type": "string"
+        }
+    },
     "functions": [],
     "variables": {},
     "resources": [
         {
-            "name": "vnet-01-nsg",
+            "name": "[parameters('nsgName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2019-11-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "securityRules": [
                     {
-                        "name": "nsgRule1",
+                        "name": "DenyAll",
                         "properties": {
                             "description": "description",
                             "protocol": "Tcp",
@@ -21,8 +25,8 @@
                             "destinationPortRange": "*",
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 100,
+                            "access": "Deny",
+                            "priority": 120,
                             "direction": "Inbound"
                         }
                     }
