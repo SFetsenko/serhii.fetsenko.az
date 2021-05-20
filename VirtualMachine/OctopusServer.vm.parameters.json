@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName":{
+           "value": "kv-serhii-fetsenko"
+        },
+        "vmName":{
+            "value": "octopus-server"
+        },
+        "OSVersion":{
+            "value": "2016-Datacenter"
+        },
+        "vmSize":{
+            "value": "Standard_D1"
+        },
+        "adminUsername":{
+            "value": "octopusmadmin"
+        },
+        "dataDiskSize":{
+            "value": 64},
+        "vnetName":{
+            "value": "vnet-01"
+        },
+        "subnetName":{
+            "value": "octopus-subnet"
+        },
+        "privateIPAddress":{
+            "value": "10.0.1.10"
+        },
+        "privateIPAllocationMethod":{
+            "value": "Static"
+        },
+        "publicIpName":{
+            "value": "octopus-master"
+        },
+        "publicIPAllocationMethod":{
+            "value": "Static"
+        },
+        "nsgName":{
+            "value": "vnet-01-nsg"
+        }
+    }
+}

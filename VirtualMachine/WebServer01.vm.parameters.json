@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName":{
+           "value": "kv-serhii-fetsenko"
+        },
+        "vmName":{
+            "value": "webserver-01"
+        },
+        "OSVersion":{
+            "value": "2016-Datacenter"
+        },
+        "vmSize":{
+            "value": "Standard_A1"
+        },
+        "adminUsername":{
+            "value": "webserveradmin"
+        },
+        "dataDiskSize":{
+            "value": 64},
+        "vnetName":{
+            "value": "vnet-01"
+        },
+        "subnetName":{
+            "value": "primary-subnet"
+        },
+        "privateIPAddress":{
+            "value": "10.0.0.5"
+        },
+        "privateIPAllocationMethod":{
+            "value": "Static"
+        },
+        "publicIpName":{
+            "value": "webserver-01-pip"
+        },
+        "publicIPAllocationMethod":{
+            "value": "Static"
+        },
+        "nsgName":{
+            "value": "vnet-01-nsg"
+        }
+    }
+}

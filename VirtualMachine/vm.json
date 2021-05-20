@@ -1,0 +1,156 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+        "keyVaultName":{
+           "type": "string"
+        },
+        "vmName":{
+            "type": "string"
+        },
+        "OSVersion":{
+            "type": "string"
+        },
+        "vmSize":{
+            "type": "string"
+        },
+        "adminUsername":{
+            "type": "string"
+        },
+        "dataDiskSize":{
+            "type": "int"
+        },
+        "vnetName":{
+            "type": "string"
+        },
+        "subnetName":{
+            "type": "string"
+        },
+        "privateIPAddress":{
+            "type": "string"
+        },
+        "privateIPAllocationMethod":{
+            "type": "string"
+        },
+        "publicIpName":{
+            "type": "string"
+        },
+        "publicIPAllocationMethod":{
+            "type": "string"
+        },
+        "nsgName": {
+            "type": "string"
+        },
+        "publisherName": {
+            "type": "string",
+            "defaultValue": "MicrosoftWindowsServer"
+        },
+        "offerName": {
+            "type": "string",
+            "defaultValue": "WindowsServer"
+        }
+  },
+  "variables": {
+    "nicName": "[concat(parameters('vmName'), '-nic')]",
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
+    "adminPassword": "[concat(uniqueString('123'),'-Pa$$')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('publicIPName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('nicName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "[parameters('privateIPAddress')]",
+              "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+        }
+      }
+    },
+    {
+        "type": "Microsoft.KeyVault/vaults/secrets",
+        "name": "[concat(parameters('keyVaultName'),'/', parameters('vmName'))]",
+        "apiVersion": "2019-09-01",
+        "properties": {
+            "contentType": "text/plain",
+            "value": "[variables('adminPassword')]"
+        }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('vmName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('vmName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('publisherName')]",
+            "offer": "[parameters('offerName')]",
+            "sku": "[parameters('OSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "StandardSSD_LRS"
+            }
+          },
+          "dataDisks": [
+            {
+              "diskSizeGB": "[parameters('dataDiskSize')]",
+              "lun": 0,
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
