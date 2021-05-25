@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName":{
+            "value": "kv-serhii-fetsenko"
+        },
+        "sqlServerName": {
+            "value": "sqlserver-02-serhii-fetsenko"
+        },
+        "sqlDatavaseName": {
+            "value": "database-02"
+        },
+        "adminUsername": {
+            "value": "sqladmin2"
+        },
+        "allowedSubnet": {
+            "value": "primary-subnet"
+        },
+        "editionName": {
+            "value": "Basic"
+        },
+        "maxSize": {
+            "value": 1073741824
+        },
+        "databaseTemplateFile": {
+            "value": "./AzureSQLDatabase.json"
+        },
+        "vnetName": {
+            "value": "vnet-01"
+        }
+    }
+}

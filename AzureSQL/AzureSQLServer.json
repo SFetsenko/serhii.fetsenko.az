@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "type": "string"
+        },
+        "sqlDatavaseName": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "allowedSubnet": {
+            "type": "string"
+        },
+        "editionName": {
+            "type": "string"
+        },
+        "maxSize": {
+            "type": "int"
+        },
+        "databaseTemplateFile": {
+            "type": "string"
+        },
+        "vnetName": {
+            "type": "string"
+        },
+        "keyVaultName": {
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "adminPassword": "[concat(uniqueString('123'),'-Pa$$')]",
+        "subnetID": "[concat('Microsoft.Network/virtualNetworks/',parameters('vnetName'), '/subnets/',parameters('allowedSubnet'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2014-04-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('adminUsername')]",
+                "administratorLoginPassword": "[variables('adminPassword')]"
+            },
+            "resources": [
+                {
+                    "name": "[concat(parameters('sqlServerName'),'/AllowedSubnets')]",
+                    "type": "Microsoft.Sql/servers/virtualNetworkRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "virtualNetworkSubnetId": "[variables('subnetID')]",
+                        "ignoreMissingVnetServiceEndpoint": "true"
+                    }
+                },
+                {
+                    "name": "DataBaseDeployment",
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2020-10-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "mode": "Incremental",
+                        "templateLink": {
+                            "relativePath": "[parameters('databaseTemplateFile')]"
+                        },
+                        "parameters": {
+                            "sqlServerName":{
+                                "value": "[parameters('sqlServerName')]"
+                            },
+                            "sqlDatabaseName":{
+                                "value": "[parameters('sqlDatavaseName')]"
+                            },
+                            "editionName": {
+                                "value": "[parameters('editionName')]"
+                            },
+                            "maxSize": {
+                                "value": "[parameters('maxSize')]"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('keyVaultName'),'/', parameters('sqlServerName'))]",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "contentType": "text/plain",
+                "value": "[variables('adminPassword')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
