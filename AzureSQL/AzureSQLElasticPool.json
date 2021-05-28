@@ -7,7 +7,7 @@
         },
         "SqlPoolName": {
             "type": "string"
-        },
+        }
         
     },
     "functions": [],

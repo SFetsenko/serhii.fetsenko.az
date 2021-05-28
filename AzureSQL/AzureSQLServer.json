@@ -5,7 +5,7 @@
         "sqlServerName": {
             "type": "string"
         },
-        "sqlDatavaseName": {
+        "sqlDatabaseName": {
             "type": "string"
         },
         "adminUsername": {
@@ -20,9 +20,6 @@
         "maxSize": {
             "type": "int"
         },
-        "databaseTemplateFile": {
-            "type": "string"
-        },
         "vnetName": {
             "type": "string"
         },
@@ -33,7 +30,7 @@
     "functions": [],
     "variables": {
         "adminPassword": "[concat(uniqueString('123'),'-Pa$$')]",
-        "subnetID": "[concat('Microsoft.Network/virtualNetworks/',parameters('vnetName'), '/subnets/',parameters('allowedSubnet'))]"
+        "subnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('allowedSubnet'))]"
     },
     "resources": [
         {
@@ -59,31 +56,18 @@
                     }
                 },
                 {
-                    "name": "DataBaseDeployment",
-                    "type": "Microsoft.Resources/deployments",
-                    "apiVersion": "2020-10-01",
+                    "name": "[concat(parameters('sqlServerName'),'/',parameters('sqlDatabaseName'))]",
+                    "type": "Microsoft.Sql/servers/databases",
+                    "apiVersion": "2021-02-01-preview",
+                    "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
                     ],
                     "properties": {
-                        "mode": "Incremental",
-                        "templateLink": {
-                            "relativePath": "[parameters('databaseTemplateFile')]"
-                        },
-                        "parameters": {
-                            "sqlServerName":{
-                                "value": "[parameters('sqlServerName')]"
-                            },
-                            "sqlDatabaseName":{
-                                "value": "[parameters('sqlDatavaseName')]"
-                            },
-                            "editionName": {
-                                "value": "[parameters('editionName')]"
-                            },
-                            "maxSize": {
-                                "value": "[parameters('maxSize')]"
-                            }
-                        }
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "edition": "[parameters('editionName')]",
+                        "maxSizeBytes": "[parameters('maxSize')]",
+                        "requestedServiceObjectiveName": "Basic"
                     }
                 }
             ]

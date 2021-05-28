@@ -6,13 +6,13 @@
             "value": "kv-serhii-fetsenko"
         },
         "sqlServerName": {
-            "value": "sqlserver-02-serhii-fetsenko"
+            "value": "sqlserver-01-serhii-fetsenko"
         },
-        "sqlDatavaseName": {
-            "value": "database-02"
+        "sqlDatabaseName": {
+            "value": "database-01"
         },
         "adminUsername": {
-            "value": "sqladmin2"
+            "value": "sqladmin"
         },
         "allowedSubnet": {
             "value": "primary-subnet"
@@ -22,9 +22,6 @@
         },
         "maxSize": {
             "value": 1073741824
-        },
-        "databaseTemplateFile": {
-            "value": "./AzureSQLDatabase.json"
         },
         "vnetName": {
             "value": "vnet-01"
