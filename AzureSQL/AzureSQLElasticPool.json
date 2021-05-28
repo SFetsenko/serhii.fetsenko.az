@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SqlServerName": {
+            "type": "string"
+        },
+        "SqlPoolName": {
+            "type": "string"
+        },
+        
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        
+        {
+  "name": "string",
+  "type": "Microsoft.Sql/servers/elasticPools",
+  "apiVersion": "2017-10-01-preview",
+  "location": "[resourceGroup().location]",
+  "tags": {},
+  "sku": {
+    "name": "string",
+    "tier": "string",
+    "size": "string",
+    "family": "string",
+    "capacity": "integer"
+  },
+  "properties": {
+    "maxSizeBytes": "integer",
+    "perDatabaseSettings": {
+      "minCapacity": "number",
+      "maxCapacity": "number"
+    },
+    "zoneRedundant": "boolean",
+    "licenseType": "string"
+  }
+
+        }
+    ],
+    "outputs": {}
+}
